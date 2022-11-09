@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { ApolloServer } from "apollo-server";
-import { MongoClient } from "mongodb";
+import { addMocksToSchema } from "@graphql-tools/mock";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import { Resolvers } from "./generated/resolvers-types";
 import Greetings from "./models";
 import { Context } from "./context";
@@ -23,6 +24,10 @@ const resolvers: Resolvers<Context> = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  schema: addMocksToSchema({
+    schema: makeExecutableSchema({ typeDefs, resolvers }),
+    preserveResolvers: true,
+  }),
   dataSources: () => ({
     greetings: new Greetings(databaseClient.db().collection("greetings")),
   }),
