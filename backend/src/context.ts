@@ -1,7 +1,7 @@
-import Greetings from "./models";
+import type { GreetingsDataSource } from "./dataSources";
 
 export interface Context {
   dataSources: {
-    greetings: Greetings;
+    greetings: GreetingsDataSource;
   };
 }

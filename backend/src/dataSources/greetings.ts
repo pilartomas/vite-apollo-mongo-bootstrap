@@ -1,8 +1,13 @@
+import { ObjectId } from "mongodb";
 import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 import { Collection, MongoDataSource } from "apollo-datasource-mongodb";
-import { GreetingDocument } from "./greeting";
 
-export default class Greetings extends MongoDataSource<GreetingDocument> {
+export interface GreetingDocument {
+  _id: ObjectId;
+  text: string;
+}
+
+export class GreetingsDataSource extends MongoDataSource<GreetingDocument> {
   constructor(
     collection: Collection<GreetingDocument>,
     options: { cache: KeyValueCache<string> }
