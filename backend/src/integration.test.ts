@@ -1,3 +1,4 @@
+import { strict as assert } from "node:assert";
 import { addMocksToSchema } from "@graphql-tools/mock";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { ApolloServer } from "@apollo/server";
@@ -35,7 +36,7 @@ describe("Integration tests", () => {
     await databaseClient.db().dropDatabase();
   });
 
-  test("Basic query", async () => {
+  test("Greetings query", async () => {
     const collection = databaseClient.db().collection("greetings");
     await collection.insertOne({ text: "Greetings!" });
 
@@ -45,7 +46,8 @@ describe("Integration tests", () => {
       },
       { contextValue: await createContext() }
     );
-    if (response.body.kind !== "single") throw new Error();
+
+    assert(response.body.kind === "single");
     expect(response.body.singleResult.errors).toBeUndefined();
     expect(response.body.singleResult.data).toHaveProperty(
       "greetings",
@@ -54,6 +56,6 @@ describe("Integration tests", () => {
   });
 
   afterAll(async () => {
-    await server.stop();
+    await databaseClient.close();
   });
 });
