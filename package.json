@@ -2,11 +2,9 @@
   "name": "vite-apollo-mongo-bootstrap",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "dev": "concurrently npm:dev:*",
-    "dev:fe": "cd frontend && npm run dev",
-    "dev:be": "cd backend && npm run dev"
+    "dev": "npm run dev --workspace=backend & npm run dev --workspace=frontend",
+    "generate": "npm run generate --workspaces"
   },
   "repository": {
     "type": "git",
