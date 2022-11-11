@@ -1,39 +1,40 @@
-import { readFileSync } from "node:fs";
-import { ApolloServer } from "apollo-server";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
 import { addMocksToSchema } from "@graphql-tools/mock";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { Resolvers } from "./generated/resolvers-types";
+import { MongoClient } from "mongodb";
 import Greetings from "./models";
 import { Context } from "./context";
-import { databaseClient } from "./db";
+import { resolvers } from "./resolvers";
+import { typeDefs } from "./typeDefs";
 
-const typeDefs = readFileSync("./schema.graphql", "utf8");
+export const startServer = async () => {
+  const server = new ApolloServer<Context>({
+    schema: addMocksToSchema({
+      schema: makeExecutableSchema({ typeDefs, resolvers }),
+      preserveResolvers: true,
+    }),
+  });
 
-databaseClient.connect();
+  const databaseClient = new MongoClient("mongodb://localhost:27017/bootstrap");
+  await databaseClient.connect();
 
-const resolvers: Resolvers<Context> = {
-  Query: {
-    greetings: async (_, __, { dataSources }) => {
-      const greetings = await dataSources.greetings.listGreetings();
-      const randomIdx = Math.floor(Math.random() * greetings.length);
-      return greetings[randomIdx]?.text ?? null;
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+    context: async () => {
+      return {
+        dataSources: {
+          greetings: new Greetings(
+            databaseClient.db().collection("greetings"),
+            {
+              cache: server.cache,
+            }
+          ),
+        },
+      };
     },
-  },
+  });
+  console.log(`🚀  Server ready at ${url}`);
 };
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  schema: addMocksToSchema({
-    schema: makeExecutableSchema({ typeDefs, resolvers }),
-    preserveResolvers: true,
-  }),
-  dataSources: () => ({
-    greetings: new Greetings(databaseClient.db().collection("greetings")),
-  }),
-});
-
-// The `listen` method launches a web server
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+startServer();
