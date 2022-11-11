@@ -1,0 +1,28 @@
+{
+  "name": "vite-apollo-mongo-bootstrap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently npm:dev:*",
+    "dev:fe": "cd frontend && npm run dev",
+    "dev:be": "cd backend && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pilartomas/vite-apollo-mongo-bootstrap.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pilartomas/vite-apollo-mongo-bootstrap/issues"
+  },
+  "homepage": "https://github.com/pilartomas/vite-apollo-mongo-bootstrap#readme",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "dependencies": {
+    "concurrently": "^7.5.0"
+  }
+}
