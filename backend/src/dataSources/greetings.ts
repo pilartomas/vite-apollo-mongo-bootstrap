@@ -13,7 +13,7 @@ export class GreetingsDataSource extends MongoDataSource<GreetingDocument> {
     options: { cache: KeyValueCache<string> }
   ) {
     super(collection);
-    this.initialize!({ cache: options.cache, context: {} });
+    this.initialize?.({ cache: options.cache, context: {} });
   }
 
   listGreetings() {

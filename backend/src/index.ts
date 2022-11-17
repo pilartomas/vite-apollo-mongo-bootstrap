@@ -10,6 +10,7 @@ export const startServer = async () => {
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: config.port },
+    // eslint-disable-next-line @typescript-eslint/require-await
     context: async () => {
       return {
         dataSources: {
@@ -26,4 +27,4 @@ export const startServer = async () => {
   console.log(`🚀  Server ready at ${url}`);
 };
 
-startServer();
+void startServer();

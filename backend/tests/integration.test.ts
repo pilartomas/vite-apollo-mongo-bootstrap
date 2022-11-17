@@ -7,6 +7,7 @@ import { server } from "../src/server";
 describe("Integration tests", () => {
   const databaseClient = new MongoClient(process.env.MONGO_URL as string);
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const createContext = async (): Promise<Context> => {
     return {
       dataSources: {
